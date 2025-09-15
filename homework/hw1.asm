@@ -1,6 +1,6 @@
 section .data
-msg:    db  "Hello, world!", 10   ; строка + перевод строки
-len     equ $ - msg               ; длина строки
+msg:    db  "Hello, world!", 10   ;
+len     equ $ - msg               ;
 
 section .text
 global _start
