@@ -13,40 +13,31 @@ main proc
     mov ax, @data
     mov ds, ax
     
-    ; Введення числа (для прикладу, задамо значення 5)
     mov ax, 5
-    
-    ; Друк вхідного числа
     call print_input_number
-    
-    ; Обчислення факторіала
     call factorial_iterative
-    
-    ; Друк результата
     call print_result
     
-    ; Завершення програми
     mov ah, 4Ch
     int 21h
 main endp
 
-; Ітеративна версія факторіала
 factorial_iterative proc
     push bx
     push cx
     
-    mov cx, ax      ; Зберігаємо вхідне значення
-    mov ax, 1       ; Початкове значення результата
-    mov dx, 0       ; Очищаємо старшу частину
+    mov cx, ax
+    mov ax, 1
+    mov dx, 0
     
     cmp cx, 0
-    je done_iter    ; Факторіал 0 = 1
+    je done_iter
     
-    mov bx, 1       ; Лічильник
+    mov bx, 1
     
 multiply_loop:
-    mul bx          ; DX:AX = DX:AX * BX
-    inc bx          ; Збільшуємо лічильник
+    mul bx
+    inc bx
     cmp bx, cx
     jle multiply_loop
     
@@ -56,7 +47,6 @@ done_iter:
     ret
 factorial_iterative endp
 
-; Друк вхідного числа
 print_input_number proc
     push ax
     push dx
@@ -68,13 +58,11 @@ print_input_number proc
     pop dx
     pop ax
     
-    ; Конвертуємо число в рядок і друкуємо
     call number_to_string
     mov ah, 09h
     lea dx, buffer
     int 21h
     
-    ; Новий рядок
     lea dx, newline
     mov ah, 09h
     int 21h
@@ -82,7 +70,6 @@ print_input_number proc
     ret
 print_input_number endp
 
-; Друк результата
 print_result proc
     push ax
     push dx
@@ -94,10 +81,8 @@ print_result proc
     pop dx
     pop ax
     
-    ; Для великих чисел потрібна спеціальна функція друку
     call print_dx_ax_number
     
-    ; Новий рядок
     lea dx, newline
     mov ah, 09h
     int 21h
@@ -105,7 +90,6 @@ print_result proc
     ret
 print_result endp
 
-; Конвертація числа в рядок (для вхідного числа)
 number_to_string proc
     push ax
     push bx
@@ -137,14 +121,12 @@ convert_loop:
     ret
 number_to_string endp
 
-; Друк числа з DX:AX
 print_dx_ax_number proc
     push ax
     push bx
     push cx
     push dx
     
-    ; Спрощена версія - друк тільки AX для малих чисел
     call number_to_string
     mov ah, 09h
     lea dx, buffer
