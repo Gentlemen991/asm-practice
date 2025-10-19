@@ -1,0 +1,160 @@
+.model small
+.stack 100h
+
+.data
+    input_msg db 'Input number: $'
+    result_msg db 'Factorial: $'
+    newline db 13, 10, '$'
+    buffer db 6 dup('$')
+    
+.code
+
+main proc
+    mov ax, @data
+    mov ds, ax
+    
+    ; Введення числа (для прикладу, задамо значення 5)
+    mov ax, 5
+    
+    ; Друк вхідного числа
+    call print_input_number
+    
+    ; Обчислення факторіала
+    call factorial_iterative
+    
+    ; Друк результата
+    call print_result
+    
+    ; Завершення програми
+    mov ah, 4Ch
+    int 21h
+main endp
+
+; Ітеративна версія факторіала
+factorial_iterative proc
+    push bx
+    push cx
+    
+    mov cx, ax      ; Зберігаємо вхідне значення
+    mov ax, 1       ; Початкове значення результата
+    mov dx, 0       ; Очищаємо старшу частину
+    
+    cmp cx, 0
+    je done_iter    ; Факторіал 0 = 1
+    
+    mov bx, 1       ; Лічильник
+    
+multiply_loop:
+    mul bx          ; DX:AX = DX:AX * BX
+    inc bx          ; Збільшуємо лічильник
+    cmp bx, cx
+    jle multiply_loop
+    
+done_iter:
+    pop cx
+    pop bx
+    ret
+factorial_iterative endp
+
+; Друк вхідного числа
+print_input_number proc
+    push ax
+    push dx
+    
+    lea dx, input_msg
+    mov ah, 09h
+    int 21h
+    
+    pop dx
+    pop ax
+    
+    ; Конвертуємо число в рядок і друкуємо
+    call number_to_string
+    mov ah, 09h
+    lea dx, buffer
+    int 21h
+    
+    ; Новий рядок
+    lea dx, newline
+    mov ah, 09h
+    int 21h
+    
+    ret
+print_input_number endp
+
+; Друк результата
+print_result proc
+    push ax
+    push dx
+    
+    lea dx, result_msg
+    mov ah, 09h
+    int 21h
+    
+    pop dx
+    pop ax
+    
+    ; Для великих чисел потрібна спеціальна функція друку
+    call print_dx_ax_number
+    
+    ; Новий рядок
+    lea dx, newline
+    mov ah, 09h
+    int 21h
+    
+    ret
+print_result endp
+
+; Конвертація числа в рядок (для вхідного числа)
+number_to_string proc
+    push ax
+    push bx
+    push cx
+    push dx
+    push si
+    
+    lea si, buffer + 5
+    mov byte ptr [si], '$'
+    mov bx, 10
+    mov cx, ax
+    
+convert_loop:
+    dec si
+    xor dx, dx
+    mov ax, cx
+    div bx
+    mov cx, ax
+    add dl, '0'
+    mov [si], dl
+    test cx, cx
+    jnz convert_loop
+    
+    pop si
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+number_to_string endp
+
+; Друк числа з DX:AX
+print_dx_ax_number proc
+    push ax
+    push bx
+    push cx
+    push dx
+    
+    ; Спрощена версія - друк тільки AX для малих чисел
+    call number_to_string
+    mov ah, 09h
+    lea dx, buffer
+    int 21h
+    
+    pop dx
+    pop cx
+    pop bx
+    pop ax
+    ret
+print_dx_ax_number endp
+
+end main

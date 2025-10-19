@@ -1,0 +1,79 @@
+.model small
+.stack 100h
+
+.data
+    input_msg db 'Input number: $'
+    result_msg db 'Factorial: $'
+    newline db 13, 10, '$'
+    buffer db 6 dup('$')
+    
+.code
+
+main proc
+    mov ax, @data
+    mov ds, ax
+    
+    ; Введення числа (для прикладу, задамо значення 5)
+    mov ax, 5
+    
+    ; Друк вхідного числа
+    call print_input_number
+    
+    ; Обчислення факторіала
+    call factorial_recursive
+    
+    ; Друк результата
+    call print_result
+    
+    ; Завершення програми
+    mov ah, 4Ch
+    int 21h
+main endp
+
+; Рекурсивна версія факторіала
+factorial_recursive proc
+    cmp ax, 1
+    jle base_case
+    
+    ; Зберігаємо поточне значення в стек
+    push ax
+    
+    ; Рекурсивний виклик для n-1
+    dec ax
+    call factorial_recursive
+    
+    ; Відновлюємо значення n
+    pop bx
+    
+    ; Множимо результат на n
+    ; DX:AX = DX:AX * BX
+    mul bx
+    
+    ret
+    
+base_case:
+    mov ax, 1
+    mov dx, 0
+    ret
+factorial_recursive endp
+
+; Інші процедури (print_input_number, print_result, number_to_string, print_dx_ax_number)
+; залишаються такими ж як в ітеративній версії
+
+print_input_number proc
+    ; ... (такий же код як вище)
+print_input_number endp
+
+print_result proc
+    ; ... (такий же код як вище)
+print_result endp
+
+number_to_string proc
+    ; ... (такий же код як вище)
+number_to_string endp
+
+print_dx_ax_number proc
+    ; ... (такий же код як вище)
+print_dx_ax_number endp
+
+end main
