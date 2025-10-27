@@ -10,7 +10,6 @@ _start:
     mov esi, buffer
     call int2str
 
-    ; вивід результату (через Linux sys_write)
     mov edx, eax
     mov ecx, buffer    
     mov ebx, 1
@@ -18,7 +17,6 @@ _start:
     mov eax, 4
     int 0x80
 
-    ; вихід з програми
     mov eax, 1
     xor ebx, ebx
     int 0x80
@@ -54,4 +52,5 @@ int2str:
     pop edx
     pop ecx
     pop ebx
+
     ret
